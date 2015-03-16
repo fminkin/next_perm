@@ -1,5 +1,4 @@
 #include "Treap.hpp"
-
 #include <algorithm>
 #include <utility>
 #include <cstdlib>
@@ -202,24 +201,15 @@ void Treap::assign(int newValue, size_t i){
 }
 
 bool Treap::nextPermutation(size_t i, size_t j){
-	/*
-	|                                             root                                                                   |
-	|T1.first|                                   T1.second (T2)                                                          |
-	|        |                                  segment (parts)                                                |T2.second|
-	|        |                  prefixParts         |             decreasingPart(suffixParts)                  |         |
-	|        |                 | elementToSwap      |             middleParts           |                      |         |
-	|T1.first|prefixParts.first| elementToSwap      |middleParts.first|elementToSwapWith|  suffixParts.second  |T2.second| - result of split
-	*/
 	auto T1 = split(root, i);
 	auto T2 = split(T1.second, j - i);
-	Node *segment = T2.first;
-	if (segment->longestNonIncreasingSuffix == segment->size){
-		changeReverseNeededStatus(segment);
-		root = merge(T1.first, merge(segment, T2.second));
+	Node *intercept = T2.first;
+	if (intercept->longestNonIncreasingSuffix == intercept->size){
+		changeReverseNeededStatus(intercept);
+		root = merge(T1.first, merge(intercept, T2.second));
 		return false;
 	}
-
-	auto parts = split(segment, segment->size - segment->longestNonIncreasingSuffix);
+	auto parts = split(intercept, intercept->size - intercept->longestNonIncreasingSuffix);
 	Node *decreasingPart = parts.second;
 	auto prefixParts = split(parts.first, parts.first->size - 1U);
 	Node *elementToSwap = prefixParts.second;
@@ -229,7 +219,7 @@ bool Treap::nextPermutation(size_t i, size_t j){
 	Node *newSuffix = merge(middleParts.first, merge(elementToSwap, suffixParts.second));
 	changeReverseNeededStatus(newSuffix);
 
-	segment = merge(prefixParts.first, merge(elementToSwapWith, newSuffix));
-	root = merge(T1.first, merge(segment, T2.second));
+	intercept = merge(prefixParts.first, merge(elementToSwapWith, newSuffix));
+	root = merge(T1.first, merge(intercept, T2.second));
 	return true;
 }
