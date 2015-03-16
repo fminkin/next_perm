@@ -17,7 +17,6 @@ int main()
 	for (size_t i = 0; i < treapResult.size(); ++i){
 		if (treapResult[i] != slowResult[i]){
 			std::cout << "FAILED\n";
-			return 0;
 		}
 	}
 	std::cout << "Done\n";
